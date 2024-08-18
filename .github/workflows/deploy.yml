@@ -28,14 +28,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-south-1
 
-    - name: Verify AWS Credentials
-      run: aws sts get-caller-identity
-
     - name: Download Chromium
       run: |
-        echo "Attempting to download Chromium from S3..."
         aws s3 cp s3://chromium-binary-db/chromium.zip chromium.zip --region ap-south-1
-        echo "Download complete."
         mkdir -p chromium
         unzip chromium.zip -d chromium
         rm chromium.zip
@@ -44,18 +39,19 @@ jobs:
       run: |
         zip -r function.zip . -x "*.git*" -x "*.log" -x ".lambdaignore" -x "node_modules/.bin/*"
 
+    - name: Verify ZIP File Size
+      run: |
+        unzip -d temp function.zip
+        du -sh temp
+
     - name: Upload to S3
       run: |
-        echo "Uploading function.zip to S3..."
         aws s3 cp function.zip s3://pdf-code-db/function.zip --region ap-south-1
-        echo "Upload complete."
 
     - name: Update Lambda Function
       run: |
-        echo "Updating Lambda function..."
         aws lambda update-function-code \
           --function-name pdf-generator \
           --s3-bucket pdf-code-db \
           --s3-key function.zip \
           --region ap-south-1
-        echo "Lambda function update complete."
