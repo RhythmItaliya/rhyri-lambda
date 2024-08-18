@@ -1,4 +1,4 @@
-name: Publish Chromium Layer
+name: Upload Chromium to S3
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  publish:
+  upload-chromium:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,6 +18,17 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y awscli
 
+    - name: Download Chromium
+      run: |
+        mkdir -p chromium
+        wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chromium-linux.zip
+        unzip chromium-linux.zip -d chromium
+        rm chromium-linux.zip
+
+    - name: Create ZIP file
+      run: |
+        zip -r chromium.zip chromium
+
     - name: Configure AWS CLI
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -25,19 +36,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-south-1
 
-    - name: Download and Prepare Chromium
+    - name: Upload to S3
       run: |
-        mkdir -p chromium
-        wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chrome-linux.zip
-        unzip chrome-linux.zip -d chromium
-        rm chrome-linux.zip
-        zip -r chromium-layer.zip chromium
-
-    - name: Publish Layer
-      run: |
-        aws lambda publish-layer-version \
-          --layer-name chromium \
-          --zip-file fileb://chromium-layer.zip \
-          --compatible-runtimes nodejs18.x \
-          --region ap-south-1 \
-          --license-info "MIT"
+        aws s3 cp chromium.zip s3://chromium-binary-db/chromium.zip --region ap-south-1
