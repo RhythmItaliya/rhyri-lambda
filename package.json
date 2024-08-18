@@ -9,9 +9,10 @@
     },
     "dependencies": {
         "@aws-sdk/client-lambda": "^3.632.0",
-        "playwright": "^1.46.1",
+        "@playwright/test": "^1.46.1",
         "cors": "^2.8.5",
         "express": "^4.19.2",
+        "playwright": "^1.46.1",
         "tmp": "^0.2.3"
     }
 }
