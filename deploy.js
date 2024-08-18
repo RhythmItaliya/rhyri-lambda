@@ -9,7 +9,7 @@ const zipFilePath = 'function.zip';
 
 const lambdaClient = new LambdaClient({ region });
 
-const zipCommand = `zip -r ${zipFilePath} . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore'`;
+const zipCommand = `zip -r ${zipFilePath} . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore' -i 'nodejs/node-modal/**'`;
 
 const createZip = () => {
   console.log('Creating ZIP file...');
