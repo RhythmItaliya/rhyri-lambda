@@ -21,14 +21,21 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps --force
 
-    - name: Create ZIP file
+    - name: Download Chromium
       run: |
-        zip -r function.zip . -x "*.git*" -x "*.log" -x ".lambdaignore" -x "node_modules/.bin/*"
+        aws s3 cp s3://chromium-binary-db/chromium.zip chromium.zip --region ap-south-1
+        mkdir -p chromium
+        unzip chromium.zip -d chromium
+        rm chromium.zip
 
     - name: Update AWS CLI
       run: |
         sudo apt-get update
         sudo apt-get install -y awscli
+
+    - name: Create ZIP file
+      run: |
+        zip -r function.zip . -x "*.git*" -x "*.log" -x ".lambdaignore" -x "node_modules/.bin/*"
 
     - name: Configure AWS CLI
       uses: aws-actions/configure-aws-credentials@v2
@@ -41,7 +48,7 @@ jobs:
       run: |
         aws s3 cp function.zip s3://pdf-code-db/function.zip --region ap-south-1
 
-    - name: Deploy to AWS Lambda
+    - name: Update Lambda Function
       run: |
         aws lambda update-function-code \
           --function-name pdf-generator \
