@@ -25,6 +25,11 @@ jobs:
       run: |
         zip -r function.zip . -x "*.git*" -x "*.log" -x ".lambdaignore" -x "node_modules/.bin/*"
 
+    - name: Update AWS CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y awscli
+
     - name: Configure AWS CLI
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -36,32 +41,10 @@ jobs:
       run: |
         aws s3 cp function.zip s3://pdf-code-db/function.zip --region ap-south-1
 
-    - name: Deploy Lambda Function Code
+    - name: Deploy to AWS Lambda
       run: |
         aws lambda update-function-code \
           --function-name pdf-generator \
           --s3-bucket pdf-code-db \
           --s3-key function.zip \
           --region ap-south-1
-
-    - name: Get Latest Layer Version ARN
-      id: get-layer-arn
-      run: |
-        layer_arn=$(aws lambda list-layer-versions --layer-name chromium --region ap-south-1 --query 'LayerVersions[0].LayerVersionArn' --output text)
-        if [ "$layer_arn" == "None" ]; then
-          echo "No layers found or error in fetching layer ARN."
-          exit 1
-        fi
-        echo "::set-output name=layer_arn::$layer_arn"
-
-    - name: Update Lambda Function Configuration
-      run: |
-        layer_arn="${{ steps.get-layer-arn.outputs.layer_arn }}"
-        if [ -z "$layer_arn" ] || [ "$layer_arn" == "None" ]; then
-          echo "Layer ARN is not set. Skipping layer update."
-        else
-          aws lambda update-function-configuration \
-            --function-name pdf-generator \
-            --layers "$layer_arn" \
-            --region ap-south-1
-        fi
