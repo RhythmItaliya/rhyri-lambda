@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "postinstall": "npx playwright install",
-        "deploy": "npm install && npm run postinstall && zip -r function.zip . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore'"
+        "deploy": "npm install && npm run postinstall && zip -r function.zip . -x '*.git*' -x '*.log' -x '.lambdaignore'"
     },
     "dependencies": {
         "@aws-sdk/client-lambda": "^3.632.0",

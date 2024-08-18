@@ -1,7 +1,6 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
 const { LambdaClient, UpdateFunctionCodeCommand } = require('@aws-sdk/client-lambda');
-require('dotenv').config();
 
 const functionName = 'pdf-generator';
 const region = 'ap-south-1';
@@ -9,7 +8,7 @@ const zipFilePath = 'function.zip';
 
 const lambdaClient = new LambdaClient({ region });
 
-const zipCommand = `zip -r ${zipFilePath} . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore'`;
+const zipCommand = `zip -r ${zipFilePath} . -x '*.git*' -x '*.log' -x '.lambdaignore'`;
 
 const createZip = () => {
   console.log('Creating ZIP file...');
