@@ -1,3 +1,6 @@
+# Node.js dependencies
+node_modules/
+
 # Environment files
 .env
 .env.*.local
@@ -12,6 +15,7 @@ lerna-debug.log*
 
 # ZIP files
 *.zip
+*.test.js
 
 # AWS CLI env (if it exists)
 awscli-env/
