@@ -4,6 +4,7 @@
     "description": "Lambda function for generating PDFs",
     "main": "index.js",
     "scripts": {
+        "postinstall": "npx playwright install",
         "deploy": "npm install && zip -r function.zip . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore'"
     },
     "dependencies": {
