@@ -23,7 +23,7 @@ jobs:
 
     - name: Create ZIP file
       run: |
-       zip -r function.zip . -x "*.git*" -x "*.log" -x ".lambdaignore" -x "node_modules/.bin/*"
+       zip -r function.zip . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore'
 
     - name: Update AWS CLI
       run: |
