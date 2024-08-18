@@ -1,7 +1,6 @@
-const chromium = require('chrome-aws-lambda');
 const puppeteer = require('puppeteer-core');
-const fs = require('fs');
 const tmp = require('tmp');
+const path = require('path');
 
 exports.handler = async (event) => {
     const { html } = JSON.parse(event.body);
@@ -16,13 +15,13 @@ exports.handler = async (event) => {
     let browser;
     let tempFile;
     try {
-        // Path to Chromium binary provided by chrome-aws-lambda
-        const executablePath = await chromium.executablePath;
+        // Path to Chromium binary provided by the Lambda Layer
+        const executablePath = '/opt/chromium/chrome';
 
         browser = await puppeteer.launch({
-            args: chromium.args,
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
             executablePath,
-            headless: chromium.headless,
+            headless: true,
         });
 
         const page = await browser.newPage();
