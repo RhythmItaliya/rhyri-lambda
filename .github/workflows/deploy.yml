@@ -19,12 +19,13 @@ jobs:
         node-version: '20'
 
     - name: Install dependencies
-      run: npm install --legacy-peer-deps --force
+      run: 
+        npm install --legacy-peer-deps --force
+        npx playwright install --legacy-peer-deps --force
 
     - name: Create ZIP file
       run: |
-        npx playwright install 
-        zip -r function.zip . -x '*.git*' -x '*.log' -x '.lambdaignore'
+        zip -r function.zip . -x '*.git*' -x '*.log' -x '.lambdaignore' -x 'node_modules/playwright/.cache/*'
 
     - name: Update AWS CLI
       run: |
