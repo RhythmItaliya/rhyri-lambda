@@ -1,6 +1,10 @@
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const tmp = require('tmp');
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+const unzipper = require('unzipper');
+const path = require('path');
 
 exports.handler = async (event) => {
     const { html } = JSON.parse(event.body);
@@ -15,8 +19,33 @@ exports.handler = async (event) => {
     let browser;
     let tempFile;
     try {
-        // The path to Chromium in the Lambda layer
-        const executablePath = '/opt/chromium/chrome'; // Update this if necessary
+        // S3 bucket and key for chromium.zip
+        const bucketName = 'chromium-binary-db';
+        const key = 'chromium.zip';
+        
+        // Download and extract Chromium binary
+        const zipPath = '/tmp/chromium.zip';
+        const chromiumDir = '/tmp/chromium';
+        
+        const s3Params = { Bucket: bucketName, Key: key };
+        const file = fs.createWriteStream(zipPath);
+        
+        await new Promise((resolve, reject) => {
+            s3.getObject(s3Params).createReadStream()
+                .pipe(file)
+                .on('finish', resolve)
+                .on('error', reject);
+        });
+        
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(zipPath)
+                .pipe(unzipper.Extract({ path: chromiumDir }))
+                .on('finish', resolve)
+                .on('error', reject);
+        });
+        
+        // Path to Chromium binary after extraction
+        const executablePath = path.join(chromiumDir, 'chrome');
 
         browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
