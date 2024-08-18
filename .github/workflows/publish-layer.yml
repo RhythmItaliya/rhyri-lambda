@@ -25,12 +25,23 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-south-1
 
+    - name: Download and prepare Chromium
+      run: |
+        mkdir -p chromium
+        wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chrome-linux.zip
+        unzip chrome-linux.zip -d chromium
+        rm chrome-linux.zip
+
+        # Create a ZIP file of the Chromium binary
+        cd chromium
+        zip -r ../chromium-layer.zip .
+        cd ..
+
     - name: Publish Layer
       run: |
         aws lambda publish-layer-version \
           --layer-name chromium \
-          --description "Chromium for Puppeteer" \
-          --zip-file fileb://chromium-layer/chromium-layer.zip \
+          --zip-file fileb://chromium-layer.zip \
           --compatible-runtimes nodejs18.x \
           --region ap-south-1 \
           --license-info "MIT"
