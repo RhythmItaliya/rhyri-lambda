@@ -23,7 +23,8 @@ jobs:
 
     - name: Create ZIP file
       run: |
-       zip -r function.zip . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore'
+        npx playwright install 
+        zip -r function.zip . -x '*.git*' -x '*.log' -x '.lambdaignore'
 
     - name: Update AWS CLI
       run: |
