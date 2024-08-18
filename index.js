@@ -1,4 +1,4 @@
-const { chromium } = require('/opt/nodejs/node_modules/playwright');
+const { chromium } = require('./nodejs/node-modal/playwright');
 const tmp = require('tmp');
 const fs = require('fs');
 
@@ -19,7 +19,6 @@ exports.handler = async (event) => {
     let tempFile;
     try {
         console.log('Launching Playwright browser...');
-        // Launch Playwright browser
         browser = await chromium.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
             headless: true,
