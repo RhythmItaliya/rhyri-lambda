@@ -1,0 +1,36 @@
+name: Publish Lambda Layer
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up AWS CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y awscli
+
+    - name: Configure AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Publish Layer
+      run: |
+        aws lambda publish-layer-version \
+          --layer-name chromium \
+          --description "Chromium for Puppeteer" \
+          --zip-file fileb://chromium-layer/chromium-layer.zip \
+          --compatible-runtimes nodejs18.x \
+          --region ap-south-1 \
+          --license-info "MIT"
