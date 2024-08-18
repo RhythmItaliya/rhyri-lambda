@@ -15,7 +15,7 @@ exports.handler = async (event) => {
     let browser;
     let tempFile;
     try {
-        const executablePath = '/chromium/chrome-linux/chrome-linux/chrome';
+        const executablePath = '/opt/chromium/chrome';
 
         browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],

@@ -27,7 +27,7 @@ jobs:
         wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chrome-linux.zip
         unzip chrome-linux.zip -d chromium
         rm chrome-linux.zip
-        
+
     - name: Update AWS CLI
       run: |
         sudo apt-get update
