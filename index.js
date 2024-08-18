@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer-core');
+const { chromium } = require('playwright');
 const tmp = require('tmp');
-const path = require('path');
+const fs = require('fs');
 
 exports.handler = async (event) => {
     const { html } = JSON.parse(event.body);
@@ -15,17 +15,14 @@ exports.handler = async (event) => {
     let browser;
     let tempFile;
     try {
-        // Path to Chromium binary provided by the Lambda Layer
-        const executablePath = '/opt/chromium/chrome';
-
-        browser = await puppeteer.launch({
+        // Launch Playwright browser
+        browser = await chromium.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-            executablePath,
             headless: true,
         });
 
         const page = await browser.newPage();
-        await page.setContent(html, { waitUntil: 'networkidle0' });
+        await page.setContent(html, { waitUntil: 'networkidle' });
 
         tempFile = tmp.fileSync({ postfix: '.pdf' });
         const filePath = tempFile.name;
