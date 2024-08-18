@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "@aws-sdk/client-lambda": "^3.632.0",
+        "aws-sdk": "^2.1677.0",
         "chrome-aws-lambda": "^10.1.0",
         "dotenv": "^16.4.5",
         "puppeteer-core": "^23.1.0",
