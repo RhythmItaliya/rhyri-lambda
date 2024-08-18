@@ -1,0 +1,41 @@
+name: Upload Chromium to S3
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  upload-chromium:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up AWS CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y awscli
+
+    - name: Download Chromium
+      run: |
+        mkdir -p chromium
+        wget https://download-chromium.appspot.com/dl/Linux_x64?type=snapshots -O chromium-linux.zip
+        unzip chromium-linux.zip -d chromium
+        rm chromium-linux.zip
+
+    - name: Create ZIP file
+      run: |
+        zip -r chromium.zip chromium
+
+    - name: Configure AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Upload to S3
+      run: |
+        aws s3 cp chromium.zip s3://chromium-binary-db/chromium.zip --region ap-south-1
