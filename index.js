@@ -1,4 +1,4 @@
-const { chromium } = require('playwright');
+const { chromium } = require('/opt/nodejs/node_modules/playwright');
 const tmp = require('tmp');
 const fs = require('fs');
 
