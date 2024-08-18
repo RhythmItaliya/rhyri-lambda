@@ -48,11 +48,20 @@ jobs:
       id: get-layer-arn
       run: |
         layer_arn=$(aws lambda list-layer-versions --layer-name chromium --region ap-south-1 --query 'LayerVersions[0].LayerVersionArn' --output text)
+        if [ "$layer_arn" == "None" ]; then
+          echo "No layers found or error in fetching layer ARN."
+          exit 1
+        fi
         echo "::set-output name=layer_arn::$layer_arn"
 
     - name: Update Lambda Function Configuration
       run: |
-        aws lambda update-function-configuration \
-          --function-name pdf-generator \
-          --layers ${{ steps.get-layer-arn.outputs.layer_arn }} \
-          --region ap-south-1
+        layer_arn="${{ steps.get-layer-arn.outputs.layer_arn }}"
+        if [ -z "$layer_arn" ] || [ "$layer_arn" == "None" ]; then
+          echo "Layer ARN is not set. Skipping layer update."
+        else
+          aws lambda update-function-configuration \
+            --function-name pdf-generator \
+            --layers "$layer_arn" \
+            --region ap-south-1
+        fi
