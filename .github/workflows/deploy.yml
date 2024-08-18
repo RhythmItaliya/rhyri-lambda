@@ -18,14 +18,14 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install dependencies
-      run: 
+    - name: Install dependencies and Playwright browsers
+      run: |
         npm install --legacy-peer-deps --force
-        npx playwright install --legacy-peer-deps --force
+        npx playwright install chromium --force
 
     - name: Create ZIP file
       run: |
-        zip -r function.zip . -x '*.git*' -x '*.log' -x '.lambdaignore' -x 'node_modules/playwright/.cache/*'
+        zip -r function.zip . -x '*.git*' -x '*.log' -x '.lambdaignore'
 
     - name: Update AWS CLI
       run: |
