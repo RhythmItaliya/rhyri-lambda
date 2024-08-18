@@ -7,6 +7,13 @@
         "deploy": "npm install && zip -r function.zip . -x '*.git*' -x '*.log' -x 'node_modules/*' -x '.lambdaignore'"
     },
     "dependencies": {
-        "playwright": "^1.46.1"
+        "playwright": "^1.46.1",
+        "@aws-sdk/client-lambda": "^3.632.0",
+        "aws-sdk": "^2.1677.0",
+        "chrome-aws-lambda": "^10.1.0",
+        "dotenv": "^16.4.5",
+        "puppeteer-core": "^23.1.0",
+        "tmp": "^0.2.3",
+        "unzipper": "^0.12.3"
     }
 }
